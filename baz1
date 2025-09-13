@@ -1,0 +1,163 @@
+local SERVER_URL = "http://pptnw.3bbddns.com:14420/heartbeat"
+local HEARTBEAT_INTERVAL = 3
+local CONFIG = __CONFIG__
+
+local TOTAL_Tripod = 0
+local HAVE_Meteor_HeavenREROLL = false
+local TOTAL_Deepsea_Pearl_Fruit = 0
+local TOTAL_Colossal_Pinecone = 0
+
+local isSystemActive = true
+local lastHeartbeatSent = 0
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+local Lighting = game:GetService("Lighting")
+local CollectionService = game:GetService("CollectionService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+local TeleportService = game:GetService("TeleportService")
+local GuiService = game:GetService("GuiService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+local LocalPlayer = Players.LocalPlayer or Players.PlayerAdded:Wait()
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+repeat task.wait() until game:IsLoaded()
+
+task.spawn(function()
+    while task.wait(math.random(60,360)) do
+        VirtualInputManager:SendMouseButtonEvent(1, 1, 1, true, nil, 0)
+        VirtualInputManager:SendMouseButtonEvent(1, 1, 1, false, nil, 0)
+    end
+end)
+
+local CheckPet = function(n)
+    local c = 0
+    for _, v in ipairs(PlayerGui.Data.Pets:GetChildren()) do
+        if v:GetAttribute("T") == v then
+            c += 1
+        end
+    end
+    return c
+end
+
+local args = {
+    [1] = {
+        ["event"] = "usecode",
+        ["code"] = "FIXERROR819"
+    }
+}
+
+ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RedemptionCodeRE"):FireServer(unpack(args))
+
+while not LocalPlayer:GetAttribute("TodayLotteryLimited") do
+    if PlayerGui.Data.Asset:GetAttribute("LotteryTicket") ~= 0 then
+        ReplicatedStorage:WaitForChild("Remote"):WaitForChild("LotteryRE"):FireServer({["event"] = "lottery", ["count"] = 1})
+    end
+    TOTAL_Tripod = CheckPet("Cerberus")
+    HAVE_Meteor_HeavenREROLL = not not PlayerGui.Data.GameFlag:GetAttribute("Base_DinoWorld")
+    TOTAL_Deepsea_Pearl_Fruit = PlayerGui.Data.Asset:GetAttribute("DeepseaPearlFruit") or 0
+    TOTAL_Colossal_Pinecone = PlayerGui.Data.Asset:GetAttribute("ColossalPinecone") or 0
+    task.wait(15)
+end
+
+-- log
+
+local function stopSystem(reason)
+    if not isSystemActive then return end
+    isSystemActive = false
+    print(string.format("Dashboard System: Stopping. Reason: %s", reason))
+end
+
+-- Function to send data to the server
+local function sendHeartbeat()
+    -- Conditions to prevent sending
+    if not isSystemActive or not LocalPlayer or not CONFIG or not CONFIG.Link or (tick() - lastHeartbeatSent < HEARTBEAT_INTERVAL) then
+        return
+    end
+
+    lastHeartbeatSent = tick()
+
+    -- Prepare the data payload
+    local payload = {
+        Link = CONFIG.Link,
+        Pc = CONFIG.Pc,
+        Username = LocalPlayer.Name,
+        Tripod = TOTAL_Tripod,
+        Meteor_heaven = HAVE_Meteor_HeavenREROLL,
+        Deepsea_pearl_fruit = TOTAL_Deepsea_Pearl_Fruit,
+        Colossal_pinecone = TOTAL_Colossal_Pinecone
+    }
+
+    -- Prepare the HTTP request data
+    local requestData = {
+        Url = SERVER_URL,
+        Method = "POST",
+        Headers = {
+            ["Content-Type"] = "application/json"
+        },
+        Body = HttpService:JSONEncode(payload)
+    }
+
+    -- Use task.spawn to send the request without blocking the main thread
+    task.spawn(function()
+        local success, response = pcall(function()
+            -- This assumes you have a global http_request function available
+            return http_request(requestData)
+        end)
+
+        if not success then
+            warn("Dashboard System: Critical error calling http_request: " .. tostring(response))
+        elseif response and not response.Success then
+            -- Handle server-side errors (e.g., bad request, server error)
+            warn(string.format("Dashboard System: Failed to send data. Code: %s, Message: %s",
+                tostring(response.StatusCode), tostring(response.StatusMessage)))
+        end
+    end)
+end
+
+-- --- System Initialization and Event Handling ---
+
+-- 1. Validate configuration
+if not CONFIG or not CONFIG.Link or CONFIG.Link == 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' then
+    stopSystem("Invalid or missing 'Link' in __CONFIG__. Please get a valid link from the dashboard.")
+    return -- Stop the script entirely if config is invalid
+end
+
+if not CONFIG.Pc or CONFIG.Pc == '' then
+    stopSystem("Invalid or missing 'Pc' name in __CONFIG__. Please set a unique name.")
+    return -- Stop the script entirely if config is invalid
+end
+
+-- 2. Wait for LocalPlayer if not immediately available
+if not LocalPlayer then
+    print("Dashboard System: Waiting for LocalPlayer...")
+    LocalPlayer = Players.PlayerAdded:Wait()
+end
+print(string.format("Dashboard System: Initialized for %s (PC: %s)", LocalPlayer.Name, CONFIG.Pc))
+
+-- 3. Connect event handlers to automatically stop the system
+GuiService.ErrorMessageChanged:Connect(function()
+    local errorCode = GuiService:GetErrorCode().Value
+    if errorCode >= Enum.ConnectionError.DisconnectErrors.Value then
+        stopSystem(string.format("Game Disconnect Error (%d)", errorCode))
+    end
+end)
+
+TeleportService.TeleportInitFailed:Connect(function(player, teleportResult, errorMessage)
+    if player == LocalPlayer then
+        stopSystem(string.format("Teleport Failed (%s)", teleportResult.Name))
+    end
+end)
+
+LocalPlayer.OnTeleport:Connect(function(teleportState)
+    if teleportState == Enum.TeleportState.Started then
+        stopSystem("Teleport Started")
+    end
+end)
+
+RunService.Heartbeat:Connect(sendHeartbeat)
+
+print("--- Dashboard System is now active. ---")

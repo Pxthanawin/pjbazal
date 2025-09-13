@@ -52,16 +52,18 @@ local args = {
 
 ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RedemptionCodeRE"):FireServer(unpack(args))
 
-while not LocalPlayer:GetAttribute("TodayLotteryLimited") do
-    if PlayerGui.Data.Asset:GetAttribute("LotteryTicket") ~= 0 then
-        ReplicatedStorage:WaitForChild("Remote"):WaitForChild("LotteryRE"):FireServer({["event"] = "lottery", ["count"] = 1})
+task.spawn(function()
+    while not LocalPlayer:GetAttribute("TodayLotteryLimited") do
+        if PlayerGui.Data.Asset:GetAttribute("LotteryTicket") ~= 0 then
+            ReplicatedStorage:WaitForChild("Remote"):WaitForChild("LotteryRE"):FireServer({["event"] = "lottery", ["count"] = 1})
+        end
+        TOTAL_Tripod = CheckPet("Cerberus")
+        HAVE_Meteor_HeavenREROLL = not not PlayerGui.Data.GameFlag:GetAttribute("Base_DinoWorld")
+        TOTAL_Deepsea_Pearl_Fruit = PlayerGui.Data.Asset:GetAttribute("DeepseaPearlFruit") or 0
+        TOTAL_Colossal_Pinecone = PlayerGui.Data.Asset:GetAttribute("ColossalPinecone") or 0
+        task.wait(15)
     end
-    TOTAL_Tripod = CheckPet("Cerberus")
-    HAVE_Meteor_HeavenREROLL = not not PlayerGui.Data.GameFlag:GetAttribute("Base_DinoWorld")
-    TOTAL_Deepsea_Pearl_Fruit = PlayerGui.Data.Asset:GetAttribute("DeepseaPearlFruit") or 0
-    TOTAL_Colossal_Pinecone = PlayerGui.Data.Asset:GetAttribute("ColossalPinecone") or 0
-    task.wait(15)
-end
+end)
 
 -- log
 

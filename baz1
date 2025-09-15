@@ -67,14 +67,10 @@ task.spawn(function()
             ReplicatedStorage:WaitForChild("Remote"):WaitForChild("LotteryRE"):FireServer({["event"] = "lottery", ["count"] = 1})
         end
         TOTAL_Tripod = CheckPet("Cerberus")
-        print(CheckPet("Cerberus"))
         HAVE_Meteor_HeavenREROLL = not not PlayerGui.Data.GameFlag:GetAttribute("Base_DinoWorld")
-        print(not not PlayerGui.Data.GameFlag:GetAttribute("Base_DinoWorld"))
         TOTAL_Deepsea_Pearl_Fruit = PlayerGui.Data.Asset:GetAttribute("DeepseaPearlFruit") or 0
-        print(PlayerGui.Data.Asset:GetAttribute("DeepseaPearlFruit") or 0)
         TOTAL_Colossal_Pinecone = PlayerGui.Data.Asset:GetAttribute("ColossalPinecone") or 0
-        print(PlayerGui.Data.Asset:GetAttribute("ColossalPinecone") or 0)
-        task.wait(15)
+        task.wait(5)
     end
 end)
 

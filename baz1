@@ -62,7 +62,6 @@ ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RedemptionCodeRE"):FireSe
 
 task.spawn(function()
     while not LocalPlayer:GetAttribute("TodayLotteryLimited") do
-        setfpscap(2)
         if PlayerGui.Data.Asset:GetAttribute("LotteryTicket") ~= 0 then
             ReplicatedStorage:WaitForChild("Remote"):WaitForChild("LotteryRE"):FireServer({["event"] = "lottery", ["count"] = 1})
         end
@@ -70,7 +69,7 @@ task.spawn(function()
         HAVE_Meteor_HeavenREROLL = not not PlayerGui.Data.GameFlag:GetAttribute("Base_DinoWorld")
         TOTAL_Deepsea_Pearl_Fruit = PlayerGui.Data.Asset:GetAttribute("DeepseaPearlFruit") or 0
         TOTAL_Colossal_Pinecone = PlayerGui.Data.Asset:GetAttribute("ColossalPinecone") or 0
-        task.wait(5)
+        task.wait(20)
     end
 end)
 

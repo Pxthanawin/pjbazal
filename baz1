@@ -51,14 +51,27 @@ local CheckPet = function(n)
     return c
 end
 
-local args = {
-    [1] = {
-        ["event"] = "usecode",
-        ["code"] = "FIXERROR819"
-    }
-}
+task.spawn(function()
 
-ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RedemptionCodeRE"):FireServer(unpack(args))
+    local args = {
+        [1] = {
+            ["event"] = "usecode",
+            ["code"] = "FIXERROR819"
+        }
+    }
+
+    ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RedemptionCodeRE"):FireServer(unpack(args))
+
+    task.wait(0.25)
+
+    local args = {
+        [1] = "UnlockBP",
+        [2] = 1
+    }
+
+    ReplicatedStorage:WaitForChild("Remote"):WaitForChild("CharacterRE"):FireServer(unpack(args))
+
+end)
 
 task.spawn(function()
     while not LocalPlayer:GetAttribute("TodayLotteryLimited") do

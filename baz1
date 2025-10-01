@@ -26,14 +26,6 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer:GetAttribute("LoadDinoOnlineTimeReady")
 
-LocalPlayer.Character.HumanoidRootPart.Anchored = true
-
-for _, v in ipairs(workspace:GetChildren()) do
-    if not(v.Name == LocalPlayer.Name or v.Name == 'Terrain') then
-        v:Destroy()
-    end
-end
-
 task.spawn(function()
     while task.wait(math.random(60,360)) do
         VirtualInputManager:SendMouseButtonEvent(1, 1, 1, true, nil, 0)
@@ -79,7 +71,7 @@ end)
 
 task.spawn(function()
     while not LocalPlayer:GetAttribute("TodayLotteryLimited") do
-setfpscap(1)
+setfpscap(20)
         if PlayerGui.Data.Asset:GetAttribute("LotteryTicket") ~= 0 then
             ReplicatedStorage:WaitForChild("Remote"):WaitForChild("LotteryRE"):FireServer({["event"] = "lottery", ["count"] = 1})
         end

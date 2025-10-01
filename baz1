@@ -53,14 +53,18 @@ end
 
 task.spawn(function()
 
-    local args = {
-        [1] = {
-            ["event"] = "usecode",
-            ["code"] = "X2CA821BA3"
-        }
-    }
+    for i, v in ipairs(codes) do
 
-    ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RedemptionCodeRE"):FireServer(unpack(args))
+        local args = {
+            [1] = {
+                ["event"] = "usecode",
+                ["code"] = v
+            }
+        }
+    
+        ReplicatedStorage:WaitForChild("Remote"):WaitForChild("RedemptionCodeRE"):FireServer(unpack(args))
+
+    end
 
     task.wait(0.25)
 

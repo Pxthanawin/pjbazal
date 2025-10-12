@@ -78,7 +78,7 @@ setfpscap(20)
         end
         TOTAL_Tripod = CheckPet("Cerberus")
         HAVE_Meteor_HeavenREROLL = not not PlayerGui.Data.GameFlag:GetAttribute("Base_DinoWorld")
-        HAVE_Snowfall_RealmREROLL = not not PlayerGui.Data.GameFlag:GetAttribute("BigPetFarm_1")
+        HAVE_Snowfall_RealmREROLL = not not PlayerGui.Data.GameFlag:GetAttribute("WeatherUnlock_Snow")
         TOTAL_Deepsea_Pearl_Fruit = PlayerGui.Data.Asset:GetAttribute("DeepseaPearlFruit") or 0
         TOTAL_Colossal_Pinecone = PlayerGui.Data.Asset:GetAttribute("ColossalPinecone") or 0
         task.wait(5)

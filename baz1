@@ -109,7 +109,7 @@ local function sendHeartbeat()
         Username = LocalPlayer.Name,
         Tripod = TOTAL_Tripod,
         Meteor_heaven = HAVE_Meteor_HeavenREROLL,
-        Snowfall_Realm = HAVE_Snowfall_RealmREROLL,
+        Snowfall_realm = HAVE_Snowfall_RealmREROLL,
         Deepsea_pearl_fruit = TOTAL_Deepsea_Pearl_Fruit,
         Colossal_pinecone = TOTAL_Colossal_Pinecone
     }
